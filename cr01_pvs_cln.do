@@ -460,7 +460,6 @@ recode Q13 (. = .a) if Q12 == 2 | Q12 == .r | Q12 == .d
 * Q15
 recode Q15_NEW (. = .a) if Q14_NEW == 3 | Q14_NEW == 4 | Q14_NEW == 5 | Q14_NEW == .r
 
-
 *Q19-22
 recode Q19 Q20 Q21 Q22 (. = .a) if Q18 == 2 | Q18 == .r 
 recode Q20 (. = .a) if Q19 == 4 | Q19 == .r
@@ -489,7 +488,6 @@ recode Q44 (. = .a) if Q43 == 4 | Q43 == .r
 *Q46/Q47 refused
 recode Q46 Q46_min (. = .r) if Q46_refused == 1
 recode Q47 Q47_min (. = .r) if Q47_refused == 1
-
 
 *Q66/67
 recode Q67 (. = .a) if Q66 == 2 | Q66 == .d | Q66 == .r 
@@ -816,6 +814,7 @@ recode Q1 (. = .r) if Q2 != .a
 * recode Q7 (. = .a) if Q6 == 2 | Q6 == .r 
 * NOTE: Changing none to NA (reflects other countries Q6/Q7)
 recode Q7 (14 = .a)
+*Note to Neena: Should we make Q7 response 14 a NO in Q6 and else a YES (excluding .r)?
 
 * Q13 
 recode Q13 (. = .a) if Q12 == 2 | Q12 == .r | Q12 == .d 
@@ -827,7 +826,6 @@ recode Q13E (. = .a) if Q13B == .a | Q13B == 1 | Q13B == .d | Q13B == .r
 
 * Q15
 recode Q15_NEW (. = .a) if Q14_NEW == 3 | Q14_NEW == 4 | Q14_NEW == 5 | Q14_NEW == .r
-
 
 *Q19-22
 recode Q19_PE Q19_UY Q19_CO Q20 Q21 Q22 (. = .a) if Q18 == 2 | Q18 == .r 
@@ -844,6 +842,7 @@ recode Q20 (. = .a) if Q19_PE == .r | Q19_UY == .r | Q19_CO  == .r
 * NA's for Q23-27 
 recode Q24 (. = .a) if Q23 != .d | Q23 != .r
 recode Q25_A (. = .a) if Q23 != 1
+
 recode Q25_B (. = .a) if Q23 == 0 | Q23 == 1 | Q24 == 1 | Q24 == .r 
 recode Q26 (. = .a) if Q23 == 0 | Q23 == 1 | Q24 == 1 | Q24 == .r 
 recode Q27 (. = .a) if Q26 != 2
@@ -1000,12 +999,13 @@ recode Q24 ///
 
 recode Q45 ///
 	(13 = 1 "Care for an urgent or acute health problem (accident or injury, fever, diarrhea, or a new pain or symptom)" ) ///
-	(14 = 2 "Follow-up care for a longstanding illness or chronic disease (hypertension or diabetes; mental health conditions") ///
-	(15 = 3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)") ///
+	(14 = 2 "Care for an illness or chronic health problem (hypertension, diabetes or a mental health problem-anxiety or depression") ///
+	(15 = 3 "Preventive care or for a general checkup (for example, prenatal care, vaccinations, eye exam)")///
 	(.a = .a "NA") (995 = 995 "Other, specify") (.r = .r "Refused"), ///
 	pre(rec) label(main_reason)
 
 * NOTE: Rodrigo, double check this. Q45 words seem to be slightly different for Kenya/Eth
+*Rodrigo response: updated to the options of the LAC raw data.
 	
 recode Q49 ///
 	(1 = 0 "0") (2 = 1 "1") (3 = 2 "2") (4 = 3 "3") (5 = 4 "4") (6 = 5 "5") ///
@@ -1056,6 +1056,9 @@ ren time_new Time
 
 order Q*, sequential
 order Q*, after(Interviewer_Gender)
+order int_length, after(IntLength)
+order mode, after(int_length)
+
 
 * Numeric questions needing NA and Refused value labels 
 lab def na_rf .a "NA" .r "Refused"
@@ -1068,7 +1071,7 @@ lab val Q23 Q25_B Q27 Q28_A Q28_B Q46 Q46_min Q47 Q47_min Q65 na_rf
 lab var int_length "Interview length (in minutes)"
 lab var Q1 "Q1. Respondent еxact age"
 lab var Q2 "Q2. Respondent's age group"
-lab var Q3 "Q3. Q3. Respondent gender"
+lab var Q3 "Q3. Respondent gender"
 lab var Q3a "Q3A. Are you a man or a woman?"
 lab var Q4 "Q4. Type of area where respondent lives"
 lab var Q5 "Q5. County, state, region where respondent lives"

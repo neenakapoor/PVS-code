@@ -13,7 +13,7 @@ dataset created in the cr01 file.
 
 u "$data_mc/02 recoded data/pvs_ke_et_lac_01.dta", clear
 
-* age_calc: exact respondent age or middle of age range 
+*age_calc: exact respondent age or middle of age range 
 gen age_calc = Q1 
 recode age_calc (.r = 23.5) if Q2 == 0
 recode age_calc (.r = 34.5) if Q2 == 1
@@ -25,7 +25,7 @@ recode age_calc (.r = 80) if Q2 == 6
 lab def ref .r "Refused"
 lab val age_calc ref
 
-* age_cat: categorical age 
+*age_cat: categorical age 
 gen age_cat = Q2
 recode age_cat (.a = 0) if Q1 >= 18 & Q1 <= 29
 recode age_cat (.a = 1) if Q1 >= 30 & Q1 <= 39
@@ -36,26 +36,29 @@ recode age_cat (.a = 5) if Q1 >= 70 & Q1 <= 79
 recode age_cat (.a = 6) if Q1 >= 80
 lab val age_cat age_cat
 
-* female: gender 	   
+*female: gender 	   
 gen gender = Q3
 lab val gender gender
 
-* NOTE: Confirm if Q3 or Q3a is correct for LAC 
+*NOTE: Confirm if Q3 or Q3a is correct for LAC
+*Responde R: Q3 seems to be the same as Q3a with different format, so Q3 works well for merging and doesnt lose any info from Q3a. I imagine they created Q3 from Q3a or something like that. I imagine that in Spanish they filled "man" or "woman" rather than gender.
 * NOTE: I renamed this from female to gender because 'another gender' 
-* 		Let me know if you disagree  
+*Let me know if you disagree. 
+*Agree, particularly with labels.   
 
-* covid_vax
+*covid_vax
 recode Q14 ///
 	(0 = 0 "Unvaccinated (0 doses)") (1 = 1 "Partial vaccination (1 dose)") /// 
 	(2 3 4 = 2 "Fully vaccinated (2+ doses)") (.r = .r Refused) (.a = .a NA), ///
 	gen(covid_vax)
 	
-* covid_vax_intent 
+*covid_vax_intent 
 gen covid_vax_intent = Q15 
 lab val covid_vax_intent yes_no_doses
 
-* patient_activiation
-* NOTE: See if this code makes sense 
+*patient_activiation
+*NOTE: See if this code makes sense 
+*R: makes sense to me
 gen patient_activation = 2 if Q16 == 3 & Q17 == 3	
 recode patient_activation (. = 1) if Q16 == 3 & Q17 == 2 | Q16 == 2 & Q17 == 3 | /// 
 						  Q16 == 2 & Q17 == 2	
@@ -269,17 +272,21 @@ ren (derQ51 derQ52 derQ53) (conf_sick conf_afford conf_opinion)
 * urban: type of region respondent lives in 
 recode Q4 (6 7 9 10 12 13 = 1 "Urban") (8 11 14 = 0 "Rural") ///
 		  (.r = .r "Refused"), gen(urban)
+*Ro question: what about options 1,2,3,4,15,16,17?
 
 * insur_type 
 * NOTE: I'm just putting Other as refused for now 
 recode Q7 (1 3 15 16 17 18 10 11 12 19 20 22 = 0 public) (2 4 5 6 7 28 13 21 = 1 private) /// 
 		  (995 = .r "Refused") (.a = .a NA), gen(insur_type)
+*Ro question: theres other options not included? We will ask country teams, right? What about 14=dont have insurance?
 
 * education 
-recode Q8 (1 7 25 26 18 19 32 33 = 0 "None") /// 
-		  (2 3 8 27 20 34 = 1 "Primary") (4 9 10 28 21 35 = 2 "Secondary") /// 
-	      (5 11 29 30 31 22 23 24 36 37 38 = 3 "Post-secondary") ///
+recode Q8 (1 7 12 25 26 18 19 32 33 = 0 "None") /// 
+		  (2 3 8 13 14 27 20 34 = 1 "Primary") (4 9 15 16 28 21 35 = 2 "Secondary") /// 
+	      (5 6 10 11 17 29 30 31 22 23 24 36 37 38 = 3 "Post-secondary") ///
 		  (.r = .r "Refused"), gen(education)
+*Ro question: What about 39 to 44?
+*Made some changes based on labels9, not for 39 to 44.
 		   
 * usual_type
 recode Q20 (1 2 12 14 15 16 23 80 82 83 40 43 92 94 = 0 "Public primary") /// 
@@ -288,6 +295,8 @@ recode Q20 (1 2 12 14 15 16 23 80 82 83 40 43 92 94 = 0 "Public primary") ///
 		   (8 9 19 21 86 89 49 99 103 = 3 "Private secondary") ///
 		   (90 104 51 105 995 = 4 "Other") ///
 		   (.a = .a "NA") ( .r = .r "Refused"), gen(usual_type)
+*Ro question: how did you know if 8 and 9 were private, for example? Are the missing ones going to be confirmed by countries?
+
 		   
 * last_type 
 recode Q44 (1 2 12 14 15 16 23 80 82 83 40 43 92 94 = 0 "Public primary") /// 
@@ -302,6 +311,7 @@ recode Q63 (1 2 9 10 39 40 48 31 32 38 49 50 61 = 0 "Lowest income") ///
 		   (3 4 5 11 12 41 42 43 33 34 35 51 52 53 = 1 "Middle income") /// 
 		   (6 7 13 14 44 45 36 37 54 55 = 2 "Highest income") ///
 		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income)
+*Ro question: are the missing options because we don't have those countries' data? Is options one and two: low, threto five middle, and 6 and 7th options highest in all cases?
 
 * NOTE: Ignored country-specific questions Q13B and Q13E
 		   

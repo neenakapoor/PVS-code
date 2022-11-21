@@ -9,8 +9,9 @@ macro drop _all
 
 *Project settings
 *Individual users 
-global user "/Users/nek096"
+*global user "/Users/nek096"
 *global user "/Users/tol145"
+global user "/Users/rodba"
 
 * Path to data folder 
 global data "$user/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core Research/People's Voice Survey/PVS External/Data"
