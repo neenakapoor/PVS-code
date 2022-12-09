@@ -312,6 +312,9 @@ ren (derq51 derq52 derq53) (conf_sick conf_afford conf_opinion)
 * urban: type of region respondent lives in 
 recode q4 (6 7 9 10 12 13 = 1 "Urban") (8 11 14 = 0 "Rural") ///
 		  (.r = .r "Refused"), gen(urban)
+*Ro comment: value lables 1-4, 15-17 are missing. Described below:
+	*1=city, 2=suburb of city, 3=small town, 4=rural area, 15=city, 16=town, 17=village
+	
 
 * insur_type 
 * NOTE: check other, specify later
@@ -320,13 +323,17 @@ recode q4 (6 7 9 10 12 13 = 1 "Urban") (8 11 14 = 0 "Rural") ///
 recode q7 (1 3 15 16 17 18 10 11 12 19 22 = 0 Public) (2 4 5 6 7 28 13 21 = 1 Private) /// 
 		  (20 995 = 3 Other) ///
 		  (.r = .r "Refused") (.a = .a NA), gen(insur_type)
+*Ro comment: value labels 8, 9, 14, 23, 24, 25, 26, 27, 28 are missing. Described below:
+	*8=hospital plan, 9=hospital plan with day-to-day benefits, 14=you don't have insurance, 23=central government health scheme (cghs), 24=state government health scheme, 25=employee state health insurance scheme (ESI), 26=Ayushman Bharat Pradhan Mantri Jan Arogya Yojna (PMJAY), 27=private health insurance, 28=private 
 
 * education 
 recode q8 (1 2 7 25 26 18 19 32 33 = 0 "None") /// 
 		  (3 8 27 20 34 = 1 "Primary") (4 9 28 21 35 = 2 "Secondary") /// 
 	      (5 10 11 29 30 31 22 23 24 36 37 38 = 3 "Post-secondary") ///
 		  (.r = .r "Refused"), gen(education)
-		   
+*Ro comment: value lables 5, 6, 12, 13, 14, 15, 16, 17, 39-44 are missing. Described below:
+	*6=Degree and above, 12 No schooling, 13 Some primary education, 14 Primary education completed, 15 Some secondary education, 16 Secondary education completed, 17 Tertiary education, 39 Never attended or only kindergarten, 40 Class 1 to class 8 (elementary), 41 Class 9 to class 11 (some high school), 42 Class 12 or GED (High school graduate), 43 College 1 year to 3 years (Diploma or College Degree), 44 College 4 years or more (Post-graduate)
+
 recode q19_ke_et (1 = 0 Public) (2 3 = 1 Private) (4 = 2 other) /// 
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(usual_type_own)
@@ -334,13 +341,18 @@ recode usual_type_own (.a = 0) if q19_co == 1 | q19_pe == 1 | q19_uy == 1
 recode usual_type_own (.a = 1) if q19_co == 2 | q19_pe == 2 | q19_uy == 2 
 recode usual_type_own (.a = 2) if q19_uy == 5 | q19_uy == 995
 recode usual_type_own (.a = .r) if q19_co == .r | q19_pe == .r | q19_uy == .r | q19_uy == .r
+*Ro comment: q19_co and q19_pe have value 5=mutual as a label, not used in the code.
 
 * usual_type_lvl 
-
 recode q20 (1 2 3 6 7 8 11 23 12 14 15 17 18 20 80 85 90 40 43 45 47 48 92 94 96 98 100 102 104 = 0 "Primary") /// 
 		   (4 5 9 13 19 21 81 82 86 87 41 42 44 46 49 93 97 101 103 105 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (995 .r = .r "Refused"), gen(usual_type_lvl)
-		   
+*Ro comments: 
+*What's a primary hospital (value 3)? Is it primary or secondary level? I imagine it's a hospital would basic services, so who knows where it fits. In usal_type_lvl it is coded as "primary" and in last_type level it's coded as "secondary".
+*values 46, 82, 87 are "clinic" but they are in secondary on the code
+*Value labels 16, 23-37, 50-76, 83, 84, 88, 89, 91, 95, 99 are missing. Described below:
+	*16 Mobile clinic, 23 Mobile clinic, 24 Ward-based outreach care, 25 Health posts,26 Department of health clinic, 27 Municipal clinic, 28 Department of health community health centre, 29 District hospital, 30 Department of health hospital (Regional, Tertiary and Central hospitals), 31 General practitioner practices, 32 Private clinics, 33 Private health centres, 34 Specialist private practices, 35 Private hospital, 36 Faith-based or mission clinic, 37 Faith-based or mission hospital, 50 Other primary care facility, specify, 51 Other secondary care facility or more, specify, 67 Sub-centre/Health and Wellness Centre, 68 Primary Health Centre, 69 Community Health Centre, 70 District Hospital, 71 Medical College, 72 Informal Providers (RMP), 73 Private clinic, 74 Private nursing home, 75 Private hospital, 76 Faith-based or charitable hospital (religion or sect based facility),  83 Other primary care facility, specify, 84 Another secondary care facility or more, specify,  88 Other primary care facility, specify, 89 Other secondary care facility or more, specify, 91 Other secondary care facility or more, specify, 95 Another secondary care establishment or more, specify, 99 Another secondary care establishment or more, specify
+  
 * usual_type_own_lvl
 gen usual_type_own_lvl = . 
 recode usual_type_own_lvl (. = 0) if usual_type_own == 0 & usual_type_lvl == 0
@@ -356,7 +368,6 @@ lab def fac_own_lvl 0 "Public primary" 1 "Public secondary (or higher)" 2 "Priva
 					.a NA .r Refused, replace
 lab val usual_type_own_lvl fac_own_lvl
 
-
 * last_type_own
 recode q43_ke_et (1 = 0 Public) (2 3 = 1 Private) (4 = 2 other) /// 
 		(.a = .a NA) (.r = .r Refused), ///
@@ -365,14 +376,18 @@ recode last_type_own (.a = 0) if q43_co == 1 | q43_pe == 1 | q43_uy == 1
 recode last_type_own (.a = 1) if q43_co == 2 | q43_pe == 2 | q43_uy == 2 | q43_uy == 3
 recode last_type_own (.a = 2) if q43_uy == 5
 recode last_type_own (.a = .r) if q43_co == .r | q43_pe == .r | q43_uy == .r | q43_uy == .r
-
-
+*Ro comment: q43_co and q43_pe have value 5=mutual as a label, not used in the code.
 
 * last_type_lvl 
 
 recode q44 (1 2 6 7 11 23 12 14 15 17 18 20 80 85 90 40 43 45 47 48 92 94 96 98 100 102 104 = 0 "Primary") /// 
 		   (3 4 5 8 9 13 19 21 81 82 86 87 41 42 44 46 49 93 97 101 103 105 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (995 .r = .r "Refused"), gen(last_type_lvl)
+*Ro comments: 
+*What's a primary hospital (value 3)? Is it primary or secondary level? I imagine it's a hospital would basic services, so who knows where it fits. In usal_type_lvl it is coded as "primary" and in last_type level it's coded as "secondary".
+*values 46, 82, 87 are "clinic" but they are in secondary on the code
+*Value labels 16, 23-37, 50-76, 83, 84, 88, 89, 91, 95, 99 are missing. Described below:
+	*16 Mobile clinic, 23 Mobile clinic, 24 Ward-based outreach care, 25 Health posts,26 Department of health clinic, 27 Municipal clinic, 28 Department of health community health centre, 29 District hospital, 30 Department of health hospital (Regional, Tertiary and Central hospitals), 31 General practitioner practices, 32 Private clinics, 33 Private health centres, 34 Specialist private practices, 35 Private hospital, 36 Faith-based or mission clinic, 37 Faith-based or mission hospital, 50 Other primary care facility, specify, 51 Other secondary care facility or more, specify, 67 Sub-centre/Health and Wellness Centre, 68 Primary Health Centre, 69 Community Health Centre, 70 District Hospital, 71 Medical College, 72 Informal Providers (RMP), 73 Private clinic, 74 Private nursing home, 75 Private hospital, 76 Faith-based or charitable hospital (religion or sect based facility),  83 Other primary care facility, specify, 84 Another secondary care facility or more, specify,  88 Other primary care facility, specify, 89 Other secondary care facility or more, specify, 91 Other secondary care facility or more, specify, 95 Another secondary care establishment or more, specify, 99 Another secondary care establishment or more, specify
 		   
 * last_type_own_lvl
 gen last_type_own_lvl = . 
@@ -413,17 +428,21 @@ recode q62 (1 5 8 9 10 11 12 13 14 15 23 24 25 26 27 28 29 30 31 32 ///
 		   (2 3 4 6 7 21 22 53 87 = 1 "Majority group languages") /// 
 		   (995 998 = 2 "Other") ///
 		   (.r = .r "Refused") (.a = .a "NA"), gen(native_lang)
+*Ro comment: how do you know if they are minority or majority, do you have a list? 
+*30, 31 and 32 don't seem to be a value in the labels51 (q62 value label).
+*There are several values not included: 33 Sepedi, 34 Sesotho,35 Setswana,36 siSwati,37 Tshivenda,38 Xitsonga,39 Afrikaans,40 English, 41 isiNdebele,42 isiXhosa,43 isiZulu,46 Ashaninka,47 Awajún/Aguaruna,48 Shipibo/Konibo, 50 Matsigenka/ Machiguenga,51 Achua,52 Other native or original language,54 Portuguese,55 Assamese,56 Bengali,57 Bodo,58 Dogri,59 Gujarati,60 Hindi,61 Kannada,62 Kashmiri,63 Konkani,64 Maithili,65 Malayalam,66 Manipuri,67 Marathi,68 Nepali,69 Odia,70 Punjabi,71 Sanskrit,72 Santali,73 Sindhi,74 Tamil,75 Telugu,76 Urdu,77 Lenguas arawak,78 Lenguas barbacoanas,79 Lenguas witoto,80 Lenguas caribes,82 Lenguas chocó,83 Lenguas guahibanas, 84 Lenguas makú,85 Lenguas quechuas,86 Lenguas tucanas, 88 Portuguese,89 English
 
 * income
 recode q63 (1 2 9 10 39 40 48 31 32 38 49 50 61 = 0 "Lowest income") /// 
 		   (3 4 5 11 12 41 42 43 33 34 35 51 52 53 = 1 "Middle income") /// 
 		   (6 7 13 14 44 45 36 37 54 55 = 2 "Highest income") ///
 		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income)
+*Ro comment: what was the reference to classify them?
+*14,11,12,10,9,13 don't seem to be a value in the labels52 (q63 value label).
+*15-30, 45-48, 56-61 are not included.
 		   
-
 * NOTE: Ignored country-specific questions Q13B and Q13E
 
-		   
 **** Order Variables ****
 		   
 order respondent_serial respondent_id psu_id interviewerid_recoded /// 
