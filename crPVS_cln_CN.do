@@ -267,49 +267,43 @@ recode q1 q2 q3 q4 q4_2 q5 q6 q7 q8 q9 q10 q11 q12_a q12_b ///
 
 * Q20, Q21
 list q18_q19 q21 if q21 > q18_q19 & q21 < . 
-*None
+* None
 
 list q20 q21 if q21 == 0 | q21 == 1
 * None
 
-* Recode 0 values for q27 to .a for q27 and "No" for q26
-* Recode 1 values to 2, because respondent likely meant 1 additional facility 
-* recode q21 (0 = .a) 
-* recode q21 (1 = 2) 
+* List if yes to q20: "all visits in the same facility" but q21: "how many different healthcare facilities did you go to" is more than 0
+list q20 q21 country if q20 == 1 & q21 > 0 & q21 < .
+* None
 
 * Q28a, Q28b 
 * list if they say "I did not get healthcare in past 12 months" but they have visit values in past 12 months 
 egen visits_total = rowtotal(q18_q19 q22 q23) 
 
-* Recoding q28_a and q28_b to refused if they say "I did not get healthcare in past 12 months" but they have visit values in past 12 months 
-
-*SS: double check, doesn't make sense
-/*
-list visits_total q28_a q28_b if q28_a == 3 & visits_total > 0 & visits_total < . /// 
+list q18_q19 q28_a q28_b if q28_a == 3 & visits_total > 0 & visits_total < . /// 
 							  | q28_b == 3 & visits_total > 0 & visits_total < .
+* None
 
 * Recoding q28_a and q28_b to refused if they say "I did not get healthcare in past 12 months" but they have visit values in past 12 months 
-*recode q28_a q28_b (3 = .r) if visits_total > 0 & visits_total < .
-							  							  			 
-* List if missing for q39/q40 but does have a visit
-list visits_total q28_a q28_b if q28_a == .a & visits_total > 0 & ///
-								 visits_total < . | ///
-								 q28_b == .a & visits_total > 0 & ///
-								 visits_total < .						 
-							  
-list visits_total q28_a q28_b if q28_a != 3 & visits_total == 0 /// 
-						   | q28_b != 3 & visits_total == 0
-						  
-* Recoding Q39 and Q40 to "I did not get healthcare in past 12 months" if they choose no but they have no visit values in past 12 months 
-recode q28_a q28_b (1 = 3) (2 = 3) if visits_total == 0 //recode no/yes to no visit if they said they had 0 visit in past 12 months
-							  
+recode q28_a q28_b (.a = .r) if visits_total > 0 & visits_total < . // 0 changes
+
+* list if it is .a but they have visit values in past 12 months 
+list q18_q19 q28_a q28_b if q28_a == .a & visits_total > 0 & visits_total < . | q28_b == .a & visits_total > 0 & visits_total < .
+* None
+  							  			 
+* list if they chose other than "I did not get healthcare in past 12 months" but visits_total == 0 
+list q18_q19 q28_a q28_b if q28_a != 3 & visits_total == 0 | q28_b != 3 & visits_total == 0
+							  					  
+* Recoding q28_a and q28_b to "I did not get healthcare in past 12 months" if they choose no but they have no visit values in past 12 months 
+recode q28_a q28_b (0 = .a) (1 = .a) if visits_total == 0 //recode no/yes to no visit if they said they had 0 visit in past 12 months
+* 267 changes made to q28_a
+* 265 changes made to q28_b		
+				
 * Recoding Q39 and Q40 to "I did not get healthcare in past 12 months" if they choose no but they have no visit values in past 12 months 
 recode q28_a q28_b (.r = .a) if visits_total == 0 //recode no/yes to no visit if they said they had 0 visit in past 12 months
+* No changes
 
-*/
 drop visits_total
-	
-
 
 *------------------------------------------------------------------------------*
 * Recode missing values to NA for intentionally skipped questions

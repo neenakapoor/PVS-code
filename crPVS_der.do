@@ -697,7 +697,8 @@ recode visits (144 = .) if country == 9
 * Uruguay: q18 values seem implausible 
 recode visits (200 = .) (156 = .) if country == 10 
 * US visits, 4 values recoded
-replace visits = . if visits > 60 & visits < . & country == 12 
+replace visits = . if visits > 60 & visits < . & country == 12
+recode visits_tele (60 = .) if country == 12  // 1 change  
 * Italy visits, 1 value recoded 
 replace visits = . if visits > 60 & visits < . & country == 14 
 * Korea, 1 visit_home and 1 visit_covid value, 5 visit values
@@ -710,6 +711,14 @@ recode visits_tele (96 = .) if country == 16
 * UK 
 recode visits (150 = .) if country == 17
 recode visits_tele (100 = .) if country == 17
+* Greece:
+replace visits = . if visits > 80 & visits < . & country == 18 // 4 changes
+* Romania: (none)
+*Nigeria
+recode visits_tele (60 = .) if country == 20  // 1 change 
+*China
+replace visits = . if visits > 70 & visits < . & country == 21 // 1 change 
+
 
 *** New country var based on region ***
 recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") ///
